@@ -46,7 +46,6 @@ export const shifrateString = (inputString: string, percent: number) => {
   );
 
   let shifrLetters = [
-    ..."1234567890", // цифры
     ..."你好世界", // Привет, мир
     ..."我爱你", // Я тебя люблю
     ..."学习", // Учиться

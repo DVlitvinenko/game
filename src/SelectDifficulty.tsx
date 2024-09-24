@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "./StoreContext";
+import Cell from "./components/Cell";
 
 const SelectDifficulty = observer(() => {
   const gameStore = useStore().gameStore;
@@ -19,15 +20,16 @@ const SelectDifficulty = observer(() => {
   return (
     <div className="flex flex-col space-y-2 ">
       <div className="">Выберите уровень сложности</div>
-      <div className="flex gap-2">
+      <div className="grid grid-cols-2 gap-2 cursor-pointer">
         {difficult.map((item, i) => (
-          <div
+          <Cell
+            type="green"
             onClick={() => handleChange(item.value)}
-            className="p-2 uppercase transition-colors border-2 border-green-500 cursor-pointer bg-slate-200 hover:bg-slate-50"
+            className="hover:bg-slate-50"
             key={`${item.value}_${i}`}
           >
             {item.name}
-          </div>
+          </Cell>
         ))}
       </div>
     </div>

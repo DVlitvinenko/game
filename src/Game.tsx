@@ -7,12 +7,12 @@ import {
 } from "./utils";
 import { useStore } from "./StoreContext";
 import { observer } from "mobx-react-lite";
-import content from "./assets/json/content.json";
+import Cell from "./components/Cell";
 
 const Game = observer(() => {
   const gameStore = useStore().gameStore;
 
-  const info = content.find((i) => i.id === gameStore.msgId);
+  const info = gameStore.getInfo();
 
   useEffect(() => {
     gameStore.startGame();
@@ -39,53 +39,63 @@ const Game = observer(() => {
 
   return (
     <>
-      <div className="mb-4">Уровень {gameStore.finishedIds.length + 1}</div>
       <div className="flex text-3xl items-center max-w-[800px] gap-y-2 gap-x-1 w-full justify-center flex-wrap">
         {shifrString.map((item, i) => (
           <div className="" key={i}>
             {checkMatch(item, questString[i]) && !isSymbol(item) && (
-              <p
-                className={`p-1 w-12 h-12 flex items-center justify-center border border-green-500`}
-              >
+              <Cell type="green" className={``}>
                 {item}
-              </p>
+              </Cell>
             )}
             {isSymbol(item) && (
-              <p className={`p-1  w-12 h-12 flex items-center justify-center `}>
+              <Cell
+                type="inherit"
+                className={`p-1  w-12 h-12 flex items-center justify-center `}
+              >
                 {item}
-              </p>
+              </Cell>
             )}
             {!checkMatch(item, questString[i]) && !isSymbol(item) && (
-              <p
+              <Cell
+                type="red"
                 onClick={() => {
                   gameStore.setSelectedSymbolId(i);
                 }}
                 className={`p-1 font-bold cursor-pointer w-12 text-center h-12 flex items-center justify-center border-red-600 border-2`}
               >
                 {item}
-              </p>
+              </Cell>
             )}
           </div>
         ))}
 
         {gameStore.selectedSymbolId >= 0 && (
-          <div className="fixed top-0 left-0 z-10 flex items-center justify-center w-screen h-screen bg-black bg-opacity-30">
-            <div className=" w-[200px] sm:w-[700px] p-10 rounded-lg text-black bg-gray-200 ">
+          <div
+            onClick={(e) =>
+              e.target === e.currentTarget && gameStore.setSelectedSymbolId(-1)
+            }
+            className="fixed top-0 left-0 z-10 flex items-center justify-center w-screen h-screen p-4 bg-black bg-opacity-30"
+          >
+            <div className=" w-full  sm:w-[700px] p-10 rounded-lg text-black bg-gray-50 space-y-4">
               <p>
                 Введите новое значение для символа "
-                {shifrString[gameStore.selectedSymbolId]}"
+                <span className="font-bold">
+                  {shifrString[gameStore.selectedSymbolId]}
+                </span>
+                "
               </p>
               <div className="flex flex-wrap items-center justify-center gap-1">
                 {lettersToSelect.map((letter, i) => (
-                  <div
+                  <Cell
+                    type="green"
                     onClick={() => {
                       handleChooseLetter(letter);
                     }}
-                    className="flex items-center justify-center w-12 h-12 border border-black cursor-pointer hover:bg-gray-400"
+                    className="cursor-pointer hover:bg-white"
                     key={`${letter as string}_${i}`}
                   >
                     {letter as string}
-                  </div>
+                  </Cell>
                 ))}
               </div>
             </div>

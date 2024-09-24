@@ -12,9 +12,15 @@ class GameStore {
   contentOver: boolean = false;
   selectedSymbolId: number = -1;
   isDifficultSelected: boolean = false;
+  hitScores: number = 0;
+  numberOfMoves: number = 0;
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  getInfo() {
+    return content.find((i) => i.id === this.msgId);
   }
 
   setPercentToShifr(newPercent: number) {
