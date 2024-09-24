@@ -12,8 +12,6 @@ import Cell from "./components/Cell";
 const Game = observer(() => {
   const gameStore = useStore().gameStore;
 
-  const info = gameStore.getInfo();
-
   useEffect(() => {
     gameStore.startGame();
   }, []);
@@ -33,8 +31,7 @@ const Game = observer(() => {
         shifrString[gameStore.selectedSymbolId],
         letter as string
       );
-    gameStore.setSelectedSymbolId(-1);
-    gameStore.checkWin();
+    gameStore.nextStep();
   };
 
   return (
@@ -102,7 +99,7 @@ const Game = observer(() => {
           </div>
         )}
       </div>
-      <div className="italic text-right">{info?.author}</div>
+      <div className="italic text-right">{gameStore.info?.author}</div>
     </>
   );
 });

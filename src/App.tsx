@@ -4,6 +4,8 @@ import Game from "./Game";
 import SelectDifficulty from "./SelectDifficulty";
 import { useStore } from "./StoreContext";
 import WinScreen from "./WinScreen";
+import Header from "./Header";
+import GameOverScreen from "./GameOverScreen";
 
 const App = observer(() => {
   const store = useStore();
@@ -11,9 +13,11 @@ const App = observer(() => {
   return (
     <>
       <div className="text-xl ">
+        <Header />
         {!store.gameStore.isDifficultSelected && <SelectDifficulty />}
         {store.gameStore.isDifficultSelected && <Game />}
         <WinScreen />
+        <GameOverScreen />
       </div>
     </>
   );

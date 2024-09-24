@@ -12,15 +12,35 @@ class GameStore {
   contentOver: boolean = false;
   selectedSymbolId: number = -1;
   isDifficultSelected: boolean = false;
-  hitScores: number = 0;
   numberOfMoves: number = 0;
+  hitScores: number = 0;
+  info:
+    | { author: string; message: string; id: number; moves: number }
+    | undefined = undefined;
+  isGameOver: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
   }
 
+  setIsGameOver(value: boolean) {
+    this.isGameOver = value;
+  }
+
+  incrementMoves() {
+    this.numberOfMoves++;
+  }
+
+  resetMoves() {
+    this.numberOfMoves = 0;
+  }
+
+  setHitScores() {
+    this.hitScores = this.info?.moves! - this.numberOfMoves;
+  }
+
   getInfo() {
-    return content.find((i) => i.id === this.msgId);
+    this.info = content.find((i) => i.id === this.msgId);
   }
 
   setPercentToShifr(newPercent: number) {
@@ -35,8 +55,10 @@ class GameStore {
     this.finishedIds = [...this.finishedIds, id];
   }
 
-  setDefaultMsg(string: string) {
-    this.defaultMsg = string;
+  setDefaultMsg() {
+    this.defaultMsg = content
+      .find((item) => item.id === this.msgId)!
+      .message.toLowerCase();
   }
   setMsg(string: string) {
     this.msg = string;
@@ -51,11 +73,30 @@ class GameStore {
   }
 
   startGame() {
-    const findMsg = content
-      .find((item) => item.id === this.msgId)!
-      .message.toLowerCase();
-    this.setMsg(shifrateString(findMsg, this.percentToShifr));
-    this.setDefaultMsg(findMsg);
+    this.setDefaultMsg();
+    this.setMsg(shifrateString(this.defaultMsg, this.percentToShifr));
+    this.resetMoves();
+    this.getInfo();
+    this.setHitScores();
+  }
+
+  nextStep() {
+    this.setSelectedSymbolId(-1);
+    this.checkWin();
+    this.incrementMoves();
+    this.setHitScores();
+    this.checkGameOver();
+  }
+
+  checkGameOver() {
+    if (this.hitScores <= 0) {
+      this.setIsGameOver(true);
+    }
+  }
+
+  restartGame() {
+    this.setIsGameOver(false);
+    this.startGame();
   }
 
   checkWin() {
@@ -70,14 +111,18 @@ class GameStore {
     }
   };
 
-  nextGame = () => {
-    this.saveResult();
+  incrementId() {
     const id = this.msgId + 1;
     if (id < content.length - 1) {
       this.setMsgId(id);
     } else {
       this.contentOver = true;
     }
+  }
+
+  nextGame = () => {
+    this.saveResult();
+    this.incrementId();
     this.isWin = false;
     this.startGame();
   };
