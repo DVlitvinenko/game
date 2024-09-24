@@ -1,152 +1,49 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
+import {
+  ShakeLettersInString,
+  checkMatch,
+  getUnikLettersFromString,
+  isSymbol,
+} from "./utils";
+import { useStore } from "./StoreContext";
+import { observer } from "mobx-react-lite";
 import content from "./assets/json/content.json";
 
-function Game() {
-  const [msgId, setMsgId] = useState<number | null>(null);
-  const [finishedIds, setFinishedIds] = useState<number[]>([]);
-  const [defaultMsg, setDefaultMsg] = useState("");
-  const [msg, setMsg] = useState("");
-  const [percentToShifr, setPercentToShifr] = useState(50);
-  const [selectedSymbolId, setSelectedSymbolId] = useState(-1);
+const Game = observer(() => {
+  const gameStore = useStore().gameStore;
+
+  const info = content.find((i) => i.id === gameStore.msgId);
 
   useEffect(() => {
-    setMsgId(updateId());
+    gameStore.startGame();
   }, []);
 
-  useEffect(() => {
-    if (msgId) {
-      const findMsg = content
-        .find((item) => item.id === msgId)!
-        .message.toLowerCase();
-      shifrate(findMsg, percentToShifr);
-      setDefaultMsg(findMsg);
-    }
-  }, [msgId]);
+  const shifrString = gameStore.msg.split("");
+  const questString = gameStore.defaultMsg.split("");
 
-  useEffect(() => {
-    shifrate(defaultMsg, percentToShifr);
-  }, [percentToShifr]);
-
-  const shifrate = (inputString: string, percent: number) => {
-    // Определяем уникальные буквы кириллицы
-    const uniqueCyrillicLetters = new Set();
-    inputString.toLowerCase();
-    for (const char of inputString) {
-      if (/[а-яёА-ЯЁ]/.test(char)) {
-        uniqueCyrillicLetters.add(char);
-      }
-    }
-
-    // Преобразуем Set в массив
-    const uniqueLettersArray = Array.from(uniqueCyrillicLetters);
-    const totalUniqueLetters = uniqueLettersArray.length;
-
-    // Определяем количество букв, которые нужно заменить
-    const numberOfLettersToReplace = Math.ceil(
-      (percent / 100) * totalUniqueLetters
-    );
-
-    // Латинские буквы для замены
-    let shifrLetters = "abcdefghijklmnopqrstuvwxyz123456789".split("");
-
-    // Перемешиваем латинские буквы
-    for (let i = shifrLetters.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shifrLetters[i], shifrLetters[j]] = [shifrLetters[j], shifrLetters[i]];
-    }
-
-    // Заменяем символы
-    let shifratedString = inputString; // Начинаем с оригинальной строки
-    for (let index = 0; index < numberOfLettersToReplace; index++) {
-      if (index < uniqueLettersArray.length && index < shifrLetters.length) {
-        const cyrillicLetter = uniqueLettersArray[index];
-        const latinLetter = shifrLetters[index];
-
-        // Заменяем символ в строке
-        shifratedString = shifratedString.replace(
-          new RegExp(cyrillicLetter, "g"),
-          latinLetter
-        );
-      }
-    }
-
-    // Устанавливаем зашифрованное сообщение
-    setMsg(shifratedString);
-  };
-
-  const updateId = () => {
-    if (msgId) {
-      setFinishedIds([...finishedIds, msgId] as number[]);
-    }
-
-    return Math.floor(Math.random() * content.length);
-  };
-
-  const replay = () => {
-    setMsgId(updateId());
-  };
-
-  const shifrateSymbol = (oldSymbol: string, newSymbol: string) => {
-    setMsg(msg.replace(new RegExp(oldSymbol, "g"), newSymbol));
-  };
-
-  const isTrue = (now: string, old: string) => {
-    return old === now && !isSymbol(now);
-  };
-
-  const isSymbol = (char: string) => {
-    return /[,. ]/.test(char);
-  };
-
-  const isCyrillic = (char: string) => {
-    return /[а-яёА-ЯЁ]/.test(char);
-  };
-
-  const shifrString = msg.split("");
-  const questString = defaultMsg.split("");
-
-  const getUnikLetters = (inputString: string) => {
-    const uniqueCyrillicLetters = new Set();
-    const lowerCaseString = inputString.toLowerCase();
-    for (const char of lowerCaseString) {
-      if (/[а-яёА-ЯЁ]/.test(char)) {
-        uniqueCyrillicLetters.add(char);
-      }
-    }
-    return Array.from(uniqueCyrillicLetters);
-  };
-
-  const lettersToSelect = getUnikLetters(defaultMsg).filter(
-    (symbol) => !shifrString.includes(symbol as string)
+  const lettersToSelect = ShakeLettersInString(
+    getUnikLettersFromString(gameStore.defaultMsg).filter(
+      (symbol) => !shifrString.includes(symbol as string)
+    ) as string[]
   );
 
-  const win = msg === defaultMsg;
+  const handleChooseLetter = (letter: string) => {
+    questString[gameStore.selectedSymbolId] === letter &&
+      gameStore.shifrateSymbol(
+        shifrString[gameStore.selectedSymbolId],
+        letter as string
+      );
+    gameStore.setSelectedSymbolId(-1);
+    gameStore.checkWin();
+  };
 
   return (
     <>
-      {win && (
-        <button
-          onClick={() => {
-            replay();
-          }}
-        >
-          Дальше
-        </button>
-      )}
-      {/* <div className="flex items-center justify-center">
-        <input
-          max={100}
-          min={0}
-          step={10}
-          type="number"
-          value={percentToShifr}
-          onChange={(e) => setPercentToShifr(Number(e.target.value))}
-        />
-      </div> */}
-      <div className="flex items-center max-w-[800px] gap-y-2 gap-x-1 w-full justify-center flex-wrap">
+      <div className="mb-4">Уровень {gameStore.finishedIds.length + 1}</div>
+      <div className="flex text-3xl items-center max-w-[800px] gap-y-2 gap-x-1 w-full justify-center flex-wrap">
         {shifrString.map((item, i) => (
-          <div className={``} key={i}>
-            {isTrue(item, questString[i]) && (
+          <div className="" key={i}>
+            {checkMatch(item, questString[i]) && !isSymbol(item) && (
               <p
                 className={`p-1 w-12 h-12 flex items-center justify-center border border-green-500`}
               >
@@ -158,38 +55,34 @@ function Game() {
                 {item}
               </p>
             )}
-            {!isTrue(item, questString[i]) && !isSymbol(item) && (
+            {!checkMatch(item, questString[i]) && !isSymbol(item) && (
               <p
                 onClick={() => {
-                  setSelectedSymbolId(i);
+                  gameStore.setSelectedSymbolId(i);
                 }}
-                className={`p-1 cursor-pointer w-12 text-center h-12 flex items-center justify-center border-red-600 border-2`}
+                className={`p-1 font-bold cursor-pointer w-12 text-center h-12 flex items-center justify-center border-red-600 border-2`}
               >
                 {item}
               </p>
             )}
           </div>
         ))}
-        {selectedSymbolId >= 0 && (
-          <div className="fixed left-0 w-screen h-screen flex items-center justify-center top-0 bg-black bg-opacity-30 z-10">
+
+        {gameStore.selectedSymbolId >= 0 && (
+          <div className="fixed top-0 left-0 z-10 flex items-center justify-center w-screen h-screen bg-black bg-opacity-30">
             <div className=" w-[200px] sm:w-[700px] p-10 rounded-lg text-black bg-gray-200 ">
               <p>
                 Введите новое значение для символа "
-                {shifrString[selectedSymbolId]}"
+                {shifrString[gameStore.selectedSymbolId]}"
               </p>
               <div className="flex flex-wrap items-center justify-center gap-1">
-                {lettersToSelect.map((letter) => (
+                {lettersToSelect.map((letter, i) => (
                   <div
                     onClick={() => {
-                      questString[selectedSymbolId] === letter &&
-                        shifrateSymbol(
-                          shifrString[selectedSymbolId],
-                          letter as string
-                        );
-                      setSelectedSymbolId(-1);
+                      handleChooseLetter(letter);
                     }}
-                    className="w-12 h-12 border cursor-pointer hover:bg-gray-400 border-black flex items-center justify-center"
-                    key={letter as string}
+                    className="flex items-center justify-center w-12 h-12 border border-black cursor-pointer hover:bg-gray-400"
+                    key={`${letter as string}_${i}`}
                   >
                     {letter as string}
                   </div>
@@ -199,8 +92,9 @@ function Game() {
           </div>
         )}
       </div>
+      <div className="italic text-right">{info?.author}</div>
     </>
   );
-}
+});
 
 export default Game;
