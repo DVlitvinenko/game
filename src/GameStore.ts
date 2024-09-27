@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import content from "./assets/json/content.json";
+import content from "../public/content.json";
 import { isCyrillic, shifrateString } from "./utils";
 
 class GameStore {
