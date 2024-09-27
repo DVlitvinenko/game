@@ -8,15 +8,21 @@ const Header = observer(() => {
   return (
     <div className="fixed top-0 left-0 w-full h-12 px-4 py-1 bg-gray-100">
       <div className="grid items-center grid-cols-3">
+        <div className="">
+          <Button
+            className="text-sm "
+            onClick={() => gameStore.setIsDifficultSelected(false)}
+          >
+            Назад
+          </Button>
+        </div>
         <div className="col-start-2">
           <Button className="text-sm " onClick={() => gameStore.restartGame()}>
             Заново
           </Button>
         </div>
         <div className="col-start-3">
-          {gameStore.msg && (
-            <div className="">Ходов: {gameStore.hitScores}</div>
-          )}
+          <div className="">Ходов: {gameStore.hitScores}</div>
         </div>
       </div>
     </div>

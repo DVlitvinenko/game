@@ -26,11 +26,12 @@ const Game = observer(() => {
   );
 
   const handleChooseLetter = (letter: string) => {
-    questString[gameStore.selectedSymbolId] === letter &&
+    if (questString[gameStore.selectedSymbolId] === letter) {
       gameStore.shifrateSymbol(
         shifrString[gameStore.selectedSymbolId],
         letter as string
       );
+    }
     gameStore.nextStep();
   };
 

@@ -6,16 +6,21 @@ import { useStore } from "./StoreContext";
 import WinScreen from "./WinScreen";
 import Header from "./Header";
 import GameOverScreen from "./GameOverScreen";
+import { useEffect } from "react";
 
 const App = observer(() => {
-  const store = useStore();
+  const gameStore = useStore().gameStore;
+
+  useEffect(() => {
+    gameStore.loadFinishedIdsFromLocal();
+  }, []);
 
   return (
     <>
       <div className="text-xl ">
-        <Header />
-        {!store.gameStore.isDifficultSelected && <SelectDifficulty />}
-        {store.gameStore.isDifficultSelected && <Game />}
+        {gameStore.isDifficultSelected && <Header />}
+        {!gameStore.isDifficultSelected && <SelectDifficulty />}
+        {gameStore.isDifficultSelected && <Game />}
         <WinScreen />
         <GameOverScreen />
       </div>

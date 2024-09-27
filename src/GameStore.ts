@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import content from "./assets/json/content.json";
-import { shifrateString } from "./utils";
+import { isCyrillic, shifrateString } from "./utils";
 
 class GameStore {
   percentToShifr: number = 0;
@@ -83,9 +83,11 @@ class GameStore {
   nextStep() {
     this.setSelectedSymbolId(-1);
     this.checkWin();
-    this.incrementMoves();
-    this.setHitScores();
-    this.checkGameOver();
+    if (!this.isWin) {
+      this.incrementMoves();
+      this.setHitScores();
+      this.checkGameOver();
+    }
   }
 
   checkGameOver() {
@@ -106,9 +108,7 @@ class GameStore {
   }
 
   saveResult = () => {
-    if (this.msgId) {
-      this.setFinishedIds(this.msgId);
-    }
+    this.setFinishedIds(this.msgId);
   };
 
   incrementId() {
@@ -120,15 +120,44 @@ class GameStore {
     }
   }
 
+  saveFinishedIdsToLocal() {
+    console.log(this.finishedIds);
+
+    localStorage.setItem("finishedIds", JSON.stringify(this.finishedIds));
+  }
+
+  loadFinishedIdsFromLocal() {
+    const finishedIds = localStorage.getItem("finishedIds");
+    if (finishedIds) {
+      this.finishedIds = JSON.parse(finishedIds);
+
+      this.setMsgId(this.finishedIds[this.finishedIds.length - 1] + 1);
+    }
+  }
+
   nextGame = () => {
     this.saveResult();
     this.incrementId();
     this.isWin = false;
     this.startGame();
+    this.saveFinishedIdsToLocal();
   };
 
   shifrateSymbol = (oldSymbol: string, newSymbol: string) => {
-    this.setMsg(this.msg.replace(new RegExp(oldSymbol, "g"), newSymbol));
+    if (isCyrillic(oldSymbol)) {
+      const msgArray = this.msg.split("");
+      const defaultMsgArray = this.defaultMsg.split("");
+
+      for (let i = 0; i < msgArray.length; i++) {
+        if (msgArray[i] === oldSymbol && defaultMsgArray[i] !== oldSymbol) {
+          msgArray[i] = newSymbol;
+        }
+      }
+
+      this.setMsg(msgArray.join(""));
+    } else {
+      this.setMsg(this.msg.replace(new RegExp(oldSymbol, "g"), newSymbol));
+    }
   };
 }
 
