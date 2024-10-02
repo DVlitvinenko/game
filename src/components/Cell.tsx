@@ -1,4 +1,4 @@
-import { ReactNode, HTMLAttributes, useState } from "react";
+import { ReactNode, HTMLAttributes } from "react";
 import { useSpring, animated, config } from "react-spring";
 
 interface CellProps extends HTMLAttributes<HTMLElement> {
