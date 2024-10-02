@@ -6,7 +6,7 @@ const Header = observer(() => {
   const gameStore = useStore().gameStore;
 
   return (
-    <div className="fixed top-0 left-0 w-full h-12 px-4 py-1 bg-gray-100">
+    <div className="fixed top-0 left-0 z-10 w-full h-12 px-4 py-1 bg-gray-100 shadow-xl">
       <div className="grid items-center grid-cols-3">
         <div className="">
           <Button

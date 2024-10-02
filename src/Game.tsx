@@ -37,7 +37,7 @@ const Game = observer(() => {
 
   return (
     <>
-      <div className="flex text-3xl items-center max-w-[800px] gap-y-2 gap-x-1 w-full justify-center flex-wrap">
+      <div className="flex text-3xl items-center max-w-[800px] pt-16 gap-y-2 gap-x-1 w-full justify-center flex-wrap">
         {shifrString.map((item, i) => (
           <div className="" key={i}>
             {checkMatch(item, questString[i]) && !isSymbol(item) && (

@@ -19,13 +19,13 @@ const SelectDifficulty = observer(() => {
 
   return (
     <div className="flex flex-col space-y-2 ">
-      <div className="">Выберите уровень сложности</div>
+      <div className="font-bold">Выберите уровень сложности</div>
       <div className="grid grid-cols-2 gap-2 cursor-pointer">
         {difficult.map((item, i) => (
           <Cell
             type="green"
             onClick={() => handleChange(item.value)}
-            className="hover:bg-slate-50 "
+            className="font-semibold hover:bg-slate-50"
             key={`${item.value}_${i}`}
           >
             {item.name}
