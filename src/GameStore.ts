@@ -121,8 +121,6 @@ class GameStore {
   }
 
   saveFinishedIdsToLocal() {
-    console.log(this.finishedIds);
-
     localStorage.setItem("finishedIds", JSON.stringify(this.finishedIds));
   }
 

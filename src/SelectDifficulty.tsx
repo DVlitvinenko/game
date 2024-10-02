@@ -25,7 +25,7 @@ const SelectDifficulty = observer(() => {
           <Cell
             type="green"
             onClick={() => handleChange(item.value)}
-            className="hover:bg-slate-50"
+            className="hover:bg-slate-50 "
             key={`${item.value}_${i}`}
           >
             {item.name}
