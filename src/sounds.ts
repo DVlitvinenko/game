@@ -1,30 +1,42 @@
-import clickSound from "./assets/sounds/click.wav";
-import gameOverSound from "./assets/sounds/1.wav";
-import rightClick from "./assets/sounds/2.wav";
-import winSound from "./assets/sounds/3.wav";
-import errorSound from "./assets/sounds/4.wav";
+import clickSound from "./assets/sounds/click.mp3";
+import rightClickSound from "./assets/sounds/2.mp3";
+import gameOverSound from "./assets/sounds/1.mp3";
+import winSound from "./assets/sounds/3.mp3";
+import errorSound from "./assets/sounds/4.mp3";
 
-export const playSoundClick = () => {
-  const audio = new Audio(clickSound);
-  audio.play();
+const audioContext = new (window.AudioContext ||
+  (window as any).webkitAudioContext)();
+
+const loadSound = async (url: string): Promise<AudioBuffer> => {
+  const response = await fetch(url);
+  const arrayBuffer = await response.arrayBuffer();
+  return audioContext.decodeAudioData(arrayBuffer);
 };
 
-export const playSoundRightClick = () => {
-  const audio = new Audio(rightClick);
-  audio.play();
+const sounds: { [key: string]: AudioBuffer } = {};
+
+const loadSounds = async () => {
+  sounds.click = await loadSound(clickSound);
+  sounds.rightClick = await loadSound(rightClickSound);
+  sounds.gameOver = await loadSound(gameOverSound);
+  sounds.win = await loadSound(winSound);
+  sounds.error = await loadSound(errorSound);
 };
 
-export const playSoundGameOver = () => {
-  const audio = new Audio(gameOverSound);
-  audio.play();
+loadSounds();
+
+export const playSound = (soundName: string) => {
+  const soundBuffer = sounds[soundName];
+  if (soundBuffer) {
+    const source = audioContext.createBufferSource();
+    source.buffer = soundBuffer;
+    source.connect(audioContext.destination);
+    source.start(0);
+  }
 };
 
-export const playSoundWin = () => {
-  const audio = new Audio(winSound);
-  audio.play();
-};
-
-export const playSoundError = () => {
-  const audio = new Audio(errorSound);
-  audio.play();
-};
+export const playSoundClick = () => playSound("click");
+export const playSoundRightClick = () => playSound("rightClick");
+export const playSoundGameOver = () => playSound("gameOver");
+export const playSoundWin = () => playSound("win");
+export const playSoundError = () => playSound("error");
