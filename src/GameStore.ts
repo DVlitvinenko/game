@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import content from "../public/content.json";
 import { isCyrillic, shifrateString } from "./utils";
+import { playSoundClick, playSoundGameOver, playSoundWin } from "./sounds";
 
 class GameStore {
   percentToShifr: number = 0;
@@ -93,6 +94,7 @@ class GameStore {
   checkGameOver() {
     if (this.hitScores <= 0) {
       this.setIsGameOver(true);
+      playSoundGameOver();
     }
   }
 
@@ -104,6 +106,7 @@ class GameStore {
   checkWin() {
     if (this.msg === this.defaultMsg) {
       this.isWin = true;
+      playSoundWin();
     }
   }
 

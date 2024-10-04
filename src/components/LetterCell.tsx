@@ -3,6 +3,7 @@ import Cell from "./Cell";
 import { observer } from "mobx-react-lite";
 import { checkMatch, isSymbol } from "../utils";
 import { useStore } from "../StoreContext";
+import { playSoundClick } from "../sounds";
 
 interface LetterCell extends HTMLAttributes<HTMLElement> {
   item: string;
@@ -19,6 +20,7 @@ const LetterCell = observer(({ item, index, questString }: LetterCell) => {
   const handleClick = () => {
     if (!isMatched && !isSymbolLetter) {
       gameStore.setSelectedSymbolId(index);
+      playSoundClick();
     }
   };
 

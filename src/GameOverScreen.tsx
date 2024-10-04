@@ -2,11 +2,13 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "./StoreContext";
 import Button from "./components/Button";
 import Cell from "./components/Cell";
+import { playSoundRightClick } from "./sounds";
 
 const GameOverScreen = observer(() => {
   const gameStore = useStore().gameStore;
 
   const handleClick = () => {
+    playSoundRightClick();
     gameStore.restartGame();
   };
 

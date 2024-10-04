@@ -5,6 +5,13 @@ import { observer } from "mobx-react-lite";
 import Cell from "./components/Cell";
 import LetterCell from "./components/LetterCell";
 import AnimatedModal from "./AnimatedModal";
+import {
+  playSoundClick,
+  playSoundError,
+  playSoundGameOver,
+  playSoundRightClick,
+  playSoundWin,
+} from "./sounds";
 
 const Game = observer(() => {
   const gameStore = useStore().gameStore;
@@ -31,7 +38,9 @@ const Game = observer(() => {
         shifrString[gameStore.selectedSymbolId],
         letter as string
       );
+      playSoundRightClick();
     } else {
+      playSoundError();
     }
     gameStore.nextStep();
   };
@@ -46,12 +55,9 @@ const Game = observer(() => {
             count++;
           }
           return (
-            <LetterCell
-              key={`${i}${count}`}
-              item={item}
-              index={i}
-              questString={questString}
-            />
+            <div className="" key={`${i}${count}`}>
+              <LetterCell item={item} index={i} questString={questString} />
+            </div>
           );
         })}
         <AnimatedModal

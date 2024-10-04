@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "./StoreContext";
 import Button from "./components/Button";
+import { playSoundClick, playSoundGameOver } from "./sounds";
 
 const Header = observer(() => {
   const gameStore = useStore().gameStore;
@@ -11,13 +12,22 @@ const Header = observer(() => {
         <div className="">
           <Button
             className="text-sm "
-            onClick={() => gameStore.setIsDifficultSelected(false)}
+            onClick={() => {
+              gameStore.setIsDifficultSelected(false);
+              playSoundClick();
+            }}
           >
             Назад
           </Button>
         </div>
         <div className="col-start-2">
-          <Button className="text-sm " onClick={() => gameStore.restartGame()}>
+          <Button
+            className="text-sm "
+            onClick={() => {
+              gameStore.restartGame();
+              playSoundGameOver();
+            }}
+          >
             Заново
           </Button>
         </div>

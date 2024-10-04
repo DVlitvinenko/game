@@ -30,7 +30,7 @@ const Cell = React.memo(
         { transform: "translate(-1px, -1px) rotate(-1deg)" },
         { transform: "translate(0px, 0px) rotate(0deg)" },
       ],
-      config: { duration: 100 },
+      config: { duration: 50 },
     });
 
     const renderCell = () => {

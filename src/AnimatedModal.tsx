@@ -17,7 +17,11 @@ const AnimatedModal: React.FC<AnimatedModalProps> = ({
   const props = useSpring({
     opacity: isVisible ? 1 : 0,
     transform: isVisible ? "translateY(0)" : "translateY(-500px)",
-    config: config.gentle,
+    config: {
+      tension: 200,
+      friction: 15,
+      duration: 200,
+    },
     onRest: () => {
       if (!isVisible) {
         setIsMounted(false);

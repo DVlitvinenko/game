@@ -2,12 +2,14 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "./StoreContext";
 import Button from "./components/Button";
 import Cell from "./components/Cell";
+import { playSoundRightClick } from "./sounds";
 
 const WinScreen = observer(() => {
   const gameStore = useStore().gameStore;
 
   const handleClick = () => {
     gameStore.nextGame();
+    playSoundRightClick();
   };
 
   return (

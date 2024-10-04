@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "./StoreContext";
 import Cell from "./components/Cell";
+import { playSoundRightClick } from "./sounds";
 
 const SelectDifficulty = observer(() => {
   const gameStore = useStore().gameStore;
@@ -8,6 +9,7 @@ const SelectDifficulty = observer(() => {
   const handleChange = (value: number) => {
     gameStore.setPercentToShifr(value);
     gameStore.setIsDifficultSelected(true);
+    playSoundRightClick();
   };
 
   const difficult = [
