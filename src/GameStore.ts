@@ -56,6 +56,10 @@ class GameStore {
     this.finishedIds = [...this.finishedIds, id];
   }
 
+  clearFinishedIds() {
+    this.finishedIds = [];
+  }
+
   setDefaultMsg() {
     this.defaultMsg = content
       .find((item) => item.id === this.msgId)!
