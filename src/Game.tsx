@@ -5,13 +5,7 @@ import { observer } from "mobx-react-lite";
 import Cell from "./components/Cell";
 import LetterCell from "./components/LetterCell";
 import AnimatedModal from "./AnimatedModal";
-import {
-  playSoundClick,
-  playSoundError,
-  playSoundGameOver,
-  playSoundRightClick,
-  playSoundWin,
-} from "./sounds";
+import { playSoundError, playSoundRightClick } from "./sounds";
 
 const Game = observer(() => {
   const gameStore = useStore().gameStore;

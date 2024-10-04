@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import content from "../public/content.json";
 import { isCyrillic, shifrateString } from "./utils";
-import { playSoundClick, playSoundGameOver, playSoundWin } from "./sounds";
+import { playSoundGameOver, playSoundWin } from "./sounds";
 
 class GameStore {
   percentToShifr: number = 0;

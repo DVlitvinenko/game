@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { animated, config, useSpring } from "react-spring";
+import { animated, useSpring } from "react-spring";
 
 interface AnimatedModalProps {
   isVisible: boolean;
