@@ -1,13 +1,10 @@
-import { useEffect } from "react";
-import {
-  ShakeLettersInString,
-  checkMatch,
-  getUnikLettersFromString,
-  isSymbol,
-} from "./utils";
+import { useEffect, useMemo } from "react";
+import { ShakeLettersInString, getUnikLettersFromString } from "./utils";
 import { useStore } from "./StoreContext";
 import { observer } from "mobx-react-lite";
 import Cell from "./components/Cell";
+import LetterCell from "./components/LetterCell";
+import AnimatedModal from "./AnimatedModal";
 
 const Game = observer(() => {
   const gameStore = useStore().gameStore;
@@ -17,7 +14,10 @@ const Game = observer(() => {
   }, []);
 
   const shifrString = gameStore.msg.split("");
-  const questString = gameStore.defaultMsg.split("");
+  const questString = useMemo(
+    () => gameStore.defaultMsg.split(""),
+    [gameStore.defaultMsg]
+  );
 
   const lettersToSelect = ShakeLettersInString(
     getUnikLettersFromString(gameStore.defaultMsg).filter(
@@ -31,6 +31,7 @@ const Game = observer(() => {
         shifrString[gameStore.selectedSymbolId],
         letter as string
       );
+    } else {
     }
     gameStore.nextStep();
   };
@@ -38,41 +39,30 @@ const Game = observer(() => {
   return (
     <>
       <div className="flex text-3xl items-center max-w-[800px] pt-16 gap-y-2 gap-x-1 w-full justify-center flex-wrap">
-        {shifrString.map((item, i) => (
-          <div className="" key={i}>
-            {checkMatch(item, questString[i]) && !isSymbol(item) && (
-              <Cell type="green" className={``}>
-                {item}
-              </Cell>
-            )}
-            {isSymbol(item) && (
-              <Cell
-                type="inherit"
-                className={`p-1  w-12 h-12 flex items-center justify-center `}
-              >
-                {item}
-              </Cell>
-            )}
-            {!checkMatch(item, questString[i]) && !isSymbol(item) && (
-              <Cell
-                type="red"
-                onClick={() => {
-                  gameStore.setSelectedSymbolId(i);
-                }}
-                className={`p-1 font-bold cursor-pointer w-12 text-center h-12 flex items-center justify-center border-red-600 border-2`}
-              >
-                {item}
-              </Cell>
-            )}
-          </div>
-        ))}
-
-        {gameStore.selectedSymbolId >= 0 && (
+        {shifrString.map((item, i) => {
+          let count = 0;
+          const checkedItem = item === shifrString[gameStore.selectedSymbolId];
+          if (!checkedItem) {
+            count++;
+          }
+          return (
+            <LetterCell
+              key={`${i}${count}`}
+              item={item}
+              index={i}
+              questString={questString}
+            />
+          );
+        })}
+        <AnimatedModal
+          onClose={() => gameStore.setSelectedSymbolId(-1)}
+          isVisible={gameStore.selectedSymbolId >= 0}
+        >
           <div
             onClick={(e) =>
               e.target === e.currentTarget && gameStore.setSelectedSymbolId(-1)
             }
-            className="fixed top-0 left-0 z-10 flex items-center justify-center w-screen h-screen p-4 bg-black bg-opacity-30"
+            className="fixed top-0 left-0 z-10 flex items-center justify-center w-screen h-screen p-4 "
           >
             <div className=" w-full  sm:w-[700px] p-10 rounded-lg text-black bg-gray-50 space-y-4">
               <p>
@@ -98,7 +88,7 @@ const Game = observer(() => {
               </div>
             </div>
           </div>
-        )}
+        </AnimatedModal>
       </div>
       <div className="italic text-right">{gameStore.info?.author}</div>
     </>

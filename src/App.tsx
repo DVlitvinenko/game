@@ -7,6 +7,7 @@ import WinScreen from "./WinScreen";
 import Header from "./Header";
 import GameOverScreen from "./GameOverScreen";
 import { useEffect } from "react";
+import AnimatedModal from "./AnimatedModal";
 
 const App = observer(() => {
   const gameStore = useStore().gameStore;
@@ -21,8 +22,18 @@ const App = observer(() => {
         {gameStore.isDifficultSelected && <Header />}
         {!gameStore.isDifficultSelected && <SelectDifficulty />}
         {gameStore.isDifficultSelected && <Game />}
-        <WinScreen />
-        <GameOverScreen />
+        <AnimatedModal
+          onClose={() => gameStore.nextGame()}
+          isVisible={gameStore.isWin}
+        >
+          <WinScreen />
+        </AnimatedModal>
+        <AnimatedModal
+          onClose={() => gameStore.restartGame()}
+          isVisible={gameStore.isGameOver}
+        >
+          <GameOverScreen />
+        </AnimatedModal>
       </div>
     </>
   );
