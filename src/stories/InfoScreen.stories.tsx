@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import InfoScreen from "../infoScreen";
+import InfoScreen from "../InfoScreen";
 
 const meta = {
   component: InfoScreen,

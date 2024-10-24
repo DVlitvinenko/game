@@ -1,5 +1,4 @@
 import Button from "./components/Button";
-import { playSoundGameOver } from "./sounds";
 
 interface HeaderTypes {
   onClickBack: () => void;

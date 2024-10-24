@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "./StoreContext";
 import { playSoundRightClick } from "./sounds";
-import InfoScreen from "./infoScreen";
+import InfoScreen from "./InfoScreen";
 
 const GameOverScreenContainer = observer(() => {
   const gameStore = useStore().gameStore;
