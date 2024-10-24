@@ -19,5 +19,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+
+  "include": ["src/**/*"], // Ensure all files in src are included
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

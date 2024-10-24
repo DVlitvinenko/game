@@ -1,74 +1,59 @@
-import { useEffect, useMemo } from "react";
-import { ShakeLettersInString, getUnikLettersFromString } from "./utils";
-import { useStore } from "./StoreContext";
-import { observer } from "mobx-react-lite";
 import Cell from "./components/Cell";
 import LetterCell from "./components/LetterCell";
 import AnimatedModal from "./AnimatedModal";
-import { playSoundError, playSoundRightClick } from "./sounds";
 
-const Game = observer(() => {
-  const gameStore = useStore().gameStore;
+interface GameTypes {
+  shifrArray: string[];
+  selectedSymbolId: number;
+  onSymbolSelect: (id: number) => void;
+  author: string;
+  onLetterChose: (letter: string) => void;
+  lettersToSelect: string[];
+  questString: string[];
+}
 
-  useEffect(() => {
-    gameStore.startGame();
-  }, []);
-
-  const shifrString = gameStore.msg.split("");
-  const questString = useMemo(
-    () => gameStore.defaultMsg.split(""),
-    [gameStore.defaultMsg]
-  );
-
-  const lettersToSelect = ShakeLettersInString(
-    getUnikLettersFromString(gameStore.defaultMsg).filter(
-      (symbol) => !shifrString.includes(symbol as string)
-    ) as string[]
-  );
-
-  const handleChooseLetter = (letter: string) => {
-    if (questString[gameStore.selectedSymbolId] === letter) {
-      gameStore.shifrateSymbol(
-        shifrString[gameStore.selectedSymbolId],
-        letter as string
-      );
-      playSoundRightClick();
-    } else {
-      playSoundError();
-    }
-    gameStore.nextStep();
-  };
-
+const Game = ({
+  shifrArray,
+  selectedSymbolId,
+  onSymbolSelect,
+  author,
+  onLetterChose,
+  lettersToSelect,
+  questString,
+}: GameTypes) => {
   return (
-    <>
+    <div className="flex flex-col items-center justify-center">
       <div className="flex text-3xl items-center max-w-[800px] pt-16 gap-y-2 gap-x-1 w-full justify-center flex-wrap">
-        {shifrString.map((item, i) => {
+        {shifrArray.map((item, i) => {
           let count = 0;
-          const checkedItem = item === shifrString[gameStore.selectedSymbolId];
+          const checkedItem = item === shifrArray[selectedSymbolId];
           if (!checkedItem) {
             count++;
           }
           return (
             <div className="" key={`${i}${count}`}>
-              <LetterCell item={item} index={i} questString={questString} />
+              <LetterCell
+                item={item}
+                index={i}
+                questString={questString}
+                setSelectedSymbolId={(id) => onSymbolSelect(id)}
+              />
             </div>
           );
         })}
         <AnimatedModal
-          onClose={() => gameStore.setSelectedSymbolId(-1)}
-          isVisible={gameStore.selectedSymbolId >= 0}
+          onClose={() => onSymbolSelect(-1)}
+          isVisible={selectedSymbolId >= 0}
         >
           <div
-            onClick={(e) =>
-              e.target === e.currentTarget && gameStore.setSelectedSymbolId(-1)
-            }
+            onClick={(e) => e.target === e.currentTarget && onSymbolSelect(-1)}
             className="fixed top-0 left-0 z-10 flex items-center justify-center w-screen h-screen p-4 "
           >
             <div className=" w-full  sm:w-[700px] p-10 rounded-lg text-black bg-gray-50 space-y-4">
               <p>
                 Введите новое значение для символа "
                 <span className="font-bold">
-                  {shifrString[gameStore.selectedSymbolId]}
+                  {shifrArray[selectedSymbolId]}
                 </span>
                 "
               </p>
@@ -77,7 +62,7 @@ const Game = observer(() => {
                   <Cell
                     type="green"
                     onClick={() => {
-                      handleChooseLetter(letter);
+                      onLetterChose(letter);
                     }}
                     className="cursor-pointer hover:bg-white"
                     key={`${letter as string}_${i}`}
@@ -90,9 +75,9 @@ const Game = observer(() => {
           </div>
         </AnimatedModal>
       </div>
-      <div className="italic text-right">{gameStore.info?.author}</div>
-    </>
+      <div className="w-full italic text-right">{author}</div>
+    </div>
   );
-});
+};
 
 export default Game;

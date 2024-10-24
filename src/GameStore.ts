@@ -133,10 +133,12 @@ class GameStore {
 
   loadFinishedIdsFromLocal() {
     const finishedIds = localStorage.getItem("finishedIds");
-    if (finishedIds) {
+    if (finishedIds?.length) {
       this.finishedIds = JSON.parse(finishedIds);
-
-      this.setMsgId(this.finishedIds[this.finishedIds.length - 1] + 1);
+      const nextId = this.finishedIds[this.finishedIds.length - 1] + 1;
+      if (nextId) {
+        this.setMsgId(nextId);
+      }
     }
   }
 
